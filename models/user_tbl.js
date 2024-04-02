@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   user_type: { type: Number, required: true },
   phone_number: { type: Number, required: true },
-  address: { type: String, required: true },
+  address: { type: String, required: false },
 });
 
 const user_tbl = mongoose.model('user_tbl', userSchema);
