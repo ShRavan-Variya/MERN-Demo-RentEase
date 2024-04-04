@@ -16,4 +16,7 @@ const PORT =process.env.PORT || 5000;
 const usersRouter = require('./routes/users_route_tbl');
 app.use('/api',usersRouter)
 
+const propertyRouter = require('./routes/property_route_tbl');
+app.use('/api',propertyRouter)
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

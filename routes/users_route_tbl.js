@@ -6,13 +6,31 @@ const user_tbl = require("../models/user_tbl");
 const verifyToken = require("../middleware/verifyToken");
 
 //Get all users
-router.get("/get_all_user_data", async (req, res) => {
+router.get("/get_all_user_data", verifyToken, async (req, res) => {
   try {
     const Users_route_tbl = await user_tbl.find();
 
+    const newList = [];
+
+    Users_route_tbl.map(item => {
+      newList.push({
+        id: item._id,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        email: item.email,
+        user_type: item.user_type,
+        phone_number: item.phone_number,
+        address_line1: item.address_line1,
+        address_line2: item.address_line2,
+        city: item.city,
+        state: item.state,
+        pincode: item.pincode,
+      })
+    })
+
     const returnData = {
       status: true,
-      data: Users_route_tbl,
+      data: newList,
       message: "List of all users"
     }
     res.status(200).json(returnData);
@@ -34,7 +52,11 @@ router.post("/add_user_data", async (req, res) => {
     password: incryptedPassword,
     user_type: req.body.user_type,
     phone_number: req.body.phone_number,
-    address: req.body.address,
+    address_line1: req.body.address_line1,
+    address_line2: req.body.address_line2,
+    city: req.body.city,
+    state: req.body.state,
+    pincode: req.body.pincode,
   });
 
   try {
@@ -51,7 +73,11 @@ router.post("/add_user_data", async (req, res) => {
         email: newUserTbl.email,
         user_type: newUserTbl.user_type,
         phone_number: newUserTbl.phone_number,
-        address: newUserTbl.address,
+        address_line1: newUserTbl.address_line1,
+        address_line2: newUserTbl.address_line2,
+        city: newUserTbl.city,
+        state: newUserTbl.state,
+        pincode: newUserTbl.pincode,
         token: token,
       },
       message: "Login successfully!"
@@ -89,7 +115,11 @@ router.post("/login", async (req, res) => {
         email: user.email,
         user_type: user.user_type,
         phone_number: user.phone_number,
-        address: user.address,
+        address_line1: user.address_line1,
+        address_line2: user.address_line2,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
         token: token,
       },
       message: "Login successfully!"
@@ -118,7 +148,11 @@ router.get("/get_user_details", verifyToken, async (req, res) => {
         email: user.email,
         user_type: user.user_type,
         phone_number: user.phone_number,
-        address: user.address,
+        address_line1: user.address_line1,
+        address_line2: user.address_line2,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
         token: req.headers.authorization,
       },
       message: "User details get successfully!"
