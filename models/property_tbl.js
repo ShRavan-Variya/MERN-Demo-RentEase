@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const propertySchema = new mongoose.Schema({
   owner_id: { type: String, required: true },
+  main_image: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true,},
   phone_number: { type: Number, required: true },

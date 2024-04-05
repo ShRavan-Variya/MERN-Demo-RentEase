@@ -23,6 +23,7 @@ router.get("/get_all_property_data", verifyToken, async (req, res) => {
 router.post("/add_property_data", verifyToken, async (req, res) => {
   const property = new property_tbl({
     owner_id: req.userId,
+    main_image: req.body.main_image,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     phone_number: req.body.phone_number,
@@ -46,6 +47,7 @@ router.post("/add_property_data", verifyToken, async (req, res) => {
       data: {
         property_id:newPropertyTbl._id,
         owner_id:newPropertyTbl.owner_id,
+        main_image:newPropertyTbl.main_image,
         firstName:newPropertyTbl.firstName,
         lastName:newPropertyTbl.lastName,
         phone_number:newPropertyTbl.phone_number,
@@ -83,6 +85,7 @@ router.get("/get_property_details", verifyToken, async (req, res) => {
       data: {
         property_id:property._id,
         owner_id:property.owner_id,
+        main_image:property.main_image,
         firstName:property.firstName,
         lastName:property.lastName,
         phone_number:property.phone_number,
@@ -121,6 +124,7 @@ router.put("/edit_property_data", verifyToken, async (req, res) => {
       return res.status(404).json(returnData);
     }
 
+    property.main_image = updates.main_image;
     property.firstName = updates.firstName;
     property.lastName = updates.lastName;
     property.phone_number = updates.phone_number;
