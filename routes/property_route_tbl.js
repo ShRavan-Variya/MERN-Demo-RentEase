@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const upload = require('./upload');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const verifyToken = require("../middleware/verifyToken");
 const property_tbl = require("../models/property_tbl");
 
@@ -22,7 +24,9 @@ router.get("/get_all_property_data", verifyToken, async (req, res) => {
 
 //POST a new property
 router.post("/add_property_data", verifyToken, async (req, res) => {
-  
+
+  const imageUrls = [];
+
   const property = new property_tbl({
     owner_id: req.userId,
     main_image: req.body.main_image,
@@ -79,7 +83,7 @@ router.get("/get_property_details", verifyToken, async (req, res) => {
         data: null,
         message: "Property not found",
       };
-      return res.status(404).json(returnData);
+      return res.status(400).json(returnData);
     }
 
     const returnData = {
@@ -128,7 +132,7 @@ router.put("/edit_property_data", verifyToken, async (req, res) => {
         data: null,
         message: "Property not found",
       };
-      return res.status(404).json(returnData);
+      return res.status(400).json(returnData);
     }
 
     property.main_image = updates.main_image;
@@ -160,21 +164,52 @@ router.put("/edit_property_data", verifyToken, async (req, res) => {
 });
 
 //POST property images
-router.post("/add_property_images", verifyToken, upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded.' });
-    }
+const uploadDir = path.resolve(__dirname, '../uploads');
 
-    const imagePath = req.file.path;
-    const originalName = req.file.originalname;
-
-    // Process the uploaded file as needed
-    res.status(200).json({ message: 'File uploaded successfully.', imagePath, originalName });
-  } catch (err) {
-    console.error('Error uploading image:', err);
-    res.status(500).json({ error: 'Internal server error.' });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir); // Save uploaded files to 'uploads' directory
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'RentEaseProperty_' + uniqueSuffix + path.extname(file.originalname)); // Rename files with unique names
   }
 });
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }
+}).array('images');
+
+// POST endpoint for uploading images
+router.post("/upload", verifyToken, async (req, res) => {
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
+    }
+
+    upload(req, res, function (err) {
+      if (err instanceof multer.MulterError) {
+        const returnData = {status: false, data: null, message: err.message};
+        return res.status(400).json(returnData);
+      } else if (err) {
+        const returnData = {status: false, data: null, message: 'Server error'};
+        return res.status(500).json(returnData);
+      }
+  
+      // Files uploaded successfully
+      const returnData = {
+        status: true,
+        data: req.files,
+        message: "Image uploaded successfully!",
+      };
+      return res.status(200).json(returnData);
+    });
+  } catch (err) {
+    const returnData = { status: false, data: null, message: err.message };
+    res.status(500).json(returnData);
+  }
+});
+
 
 module.exports = router;
