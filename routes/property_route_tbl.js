@@ -24,9 +24,6 @@ router.get("/get_all_property_data", verifyToken, async (req, res) => {
 
 //POST a new property
 router.post("/add_property_data", verifyToken, async (req, res) => {
-
-  const imageUrls = [];
-
   const property = new property_tbl({
     owner_id: req.userId,
     main_image: req.body.main_image,
@@ -41,7 +38,7 @@ router.post("/add_property_data", verifyToken, async (req, res) => {
     facilities: req.body.facilities,
     advantages: req.body.advantages,
     near_by: req.body.near_by,
-    images: imageUrls,
+    images: req.body.images,
   });
 
   try {
