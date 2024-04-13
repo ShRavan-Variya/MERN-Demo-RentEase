@@ -187,13 +187,13 @@ router.post("/upload", verifyToken, async (req, res) => {
 
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {
-        const returnData = {status: false, data: null, message: err.message};
+        const returnData = { status: false, data: null, message: err.message };
         return res.status(400).json(returnData);
       } else if (err) {
-        const returnData = {status: false, data: null, message: 'Server error'};
+        const returnData = { status: false, data: null, message: 'Server error' };
         return res.status(500).json(returnData);
       }
-  
+
       // Files uploaded successfully
       const returnData = {
         status: true,

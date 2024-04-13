@@ -9,6 +9,10 @@ const verifyToken = (req, res, next) => {
   }
 
   jwt.verify(token, 'RentEaseDbData', (err, decoded) => {
+
+    console.log('====================================');
+    console.log('err :: ', err);
+    console.log('====================================');
     if (err) {
       const returnData = { status: false, data: null, message: "Invalid token" }
       return res.status(404).json(returnData);
