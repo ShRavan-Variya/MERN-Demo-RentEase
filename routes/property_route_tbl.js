@@ -7,9 +7,9 @@ const verifyToken = require("../middleware/verifyToken");
 const property_tbl = require("../models/property_tbl");
 
 //Get all properties
-router.get("/get_all_property_data", verifyToken, async (req, res) => {
+router.get("/get_user_property", verifyToken, async (req, res) => {
   try {
-    const Property_route_tbl = await property_tbl.find();
+    const Property_route_tbl = await property_tbl.find({isLive: true});
     const returnData = {
       status: true,
       data: Property_route_tbl,
@@ -31,6 +31,8 @@ router.post("/add_property_data", verifyToken, async (req, res) => {
     lastName: req.body.lastName,
     phone_number: req.body.phone_number,
     isLive: req.body.isLive,
+    address_line1: req.body.address_line1,
+    address_line2: req.body.address_line2,
     area: req.body.area,
     city: req.body.city,
     state: req.body.state,
@@ -53,6 +55,8 @@ router.post("/add_property_data", verifyToken, async (req, res) => {
         lastName: newPropertyTbl.lastName,
         phone_number: newPropertyTbl.phone_number,
         isLive: newPropertyTbl.isLive,
+        address_line1: newPropertyTbl.address_line1,
+        address_line2: newPropertyTbl.address_line2,
         area: newPropertyTbl.area,
         city: newPropertyTbl.city,
         state: newPropertyTbl.state,
@@ -93,6 +97,8 @@ router.get("/get_property_details", verifyToken, async (req, res) => {
         lastName: property.lastName,
         phone_number: property.phone_number,
         isLive: property.isLive,
+        address_line1: property.address_line1,
+        address_line2: property.address_line2,
         area: property.area,
         city: property.city,
         state: property.state,
@@ -137,6 +143,8 @@ router.put("/edit_property_data", verifyToken, async (req, res) => {
     property.lastName = updates.lastName;
     property.phone_number = updates.phone_number;
     property.isLive = updates.isLive;
+    property.address_line1 = updates.address_line1,
+    property.address_line2 = updates.address_line2,
     property.area = updates.area;
     property.city = updates.city;
     property.state = updates.state;
@@ -207,6 +215,7 @@ router.post("/upload", verifyToken, async (req, res) => {
     res.status(500).json(returnData);
   }
 });
+
 
 
 module.exports = router;

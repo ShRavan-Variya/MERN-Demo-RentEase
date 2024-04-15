@@ -7,6 +7,8 @@ const propertySchema = new mongoose.Schema({
   lastName: {type: String},
   phone_number: {type: Number},
   isLive: {type: Boolean},
+  address_line1: {type: String},
+  address_line2: {type: String},
   area: {type: String},
   city: {type: String},
   state: {type: String},

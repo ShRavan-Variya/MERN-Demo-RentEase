@@ -20,6 +20,6 @@ app.use('/api',usersRouter)
 const propertyRouter = require('./routes/property_route_tbl');
 app.use('/api',propertyRouter)
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, './uploads')));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
