@@ -22,6 +22,21 @@ router.get("/get_user_property", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/get_owner_property", verifyToken, async (req, res) => {
+  try {
+    const Property_route_tbl = await property_tbl.find({owner_id:req.query.owner_id});
+    const returnData = {
+      status: true,
+      data: Property_route_tbl,
+      message: "List of all properties",
+    };
+    res.status(200).json(returnData);
+  } catch (err) {
+    const returnData = { status: false, data: null, message: err.message };
+    return res.status(500).json(returnData);
+  }
+});
+
 //POST a new property
 router.post("/add_property_data", verifyToken, async (req, res) => {
   const property = new property_tbl({
