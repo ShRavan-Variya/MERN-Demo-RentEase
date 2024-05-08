@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
+const path = require("path");
 const fs = require('fs');
 const verifyToken = require("../middleware/verifyToken");
 const property_tbl = require("../models/property_tbl");
@@ -9,7 +9,7 @@ const property_tbl = require("../models/property_tbl");
 //Get all properties
 router.get("/get_user_property", verifyToken, async (req, res) => {
   try {
-    const Property_route_tbl = await property_tbl.find({isLive: true});
+    const Property_route_tbl = await property_tbl.find({ isLive: true });
     const returnData = {
       status: true,
       data: Property_route_tbl,
@@ -24,7 +24,7 @@ router.get("/get_user_property", verifyToken, async (req, res) => {
 
 router.get("/get_owner_property", verifyToken, async (req, res) => {
   try {
-    const Property_route_tbl = await property_tbl.find({owner_id:req.query.owner_id});
+    const Property_route_tbl = await property_tbl.find({ owner_id: req.query.owner_id });
     const returnData = {
       status: true,
       data: Property_route_tbl,
@@ -138,6 +138,12 @@ router.put("/edit_property_data", verifyToken, async (req, res) => {
   const owner_id = req.query.owner_id;
   const updates = req.body; // Data to update
 
+  console.log('====================================');
+  console.log("property_id::", JSON.stringify(property_id));
+  console.log("owner_id::", JSON.stringify(owner_id));
+  console.log("updates::", JSON.stringify(updates));
+  console.log('====================================');
+
   try {
     const property = await property_tbl.findOne({
       _id: property_id,
@@ -231,6 +237,45 @@ router.post("/upload", verifyToken, async (req, res) => {
   }
 });
 
+//PUT property images (#update)
+router.put("/update", verifyToken, async (req, res) => {
+  try {
+    const id = req.body.id;
+    if (!id) {
+      const returnData = { status: false, data: null, message: "ID parameter is missing" };
+      return res.status(400).json(returnData);
+    }
+    console.log('====================================');
+    console.log("id::",JSON.stringify(id));
+    console.log('====================================');
 
+    // Check if the file exists
+    const imagePath = path.join(uploadDir, `RentEaseProperty_${id}`);
+    if (fs.existsSync(imagePath)) {
+      // If image exists, return its URL and a message
+      const imageUrl = `/uploads/RentEaseProperty_${id}`;
+      const returnData = { status: true, data: { imageUrl }, message: "Image exists, URL returned" };
+      return res.status(200).json(returnData);
+    }
+
+    // If image doesn't exist, upload the new image
+    upload(req, res, function (err) {
+      if (err instanceof multer.MulterError) {
+        const returnData = { status: false, data: null, message: err.message };
+        return res.status(400).json(returnData);
+      } else if (err) {
+        const returnData = { status: false, data: null, message: "Server error" };
+        return res.status(500).json(returnData);
+      }
+
+      const imageUrl = `/uploads/${req.file.filename}`;
+      const returnData = { status: true, data: { imageUrl }, message: "Image uploaded successfully" };
+      return res.status(200).json(returnData);
+    });
+  } catch (err) {
+    const returnData = { status: false, data: null, message: err.message };
+    res.status(500).json(returnData);
+  }
+});
 
 module.exports = router;

@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 const uri = "mongodb+srv://shravanvariya:RentEaseDbAccess@rentease.yfczobv.mongodb.net/"
+// const uri = 'mongodb://localhost:27017/RentEaseDB';
 
 //MongoDB connection
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
@@ -23,5 +24,8 @@ const propertyRouter = require('./routes/property_route_tbl');
 app.use('/api',propertyRouter)
 
 app.use('/api/uploads', express.static(path.join(__dirname, './uploads')));
+
+const updateImagesRouter = require('./routes/property_route_tbl');
+app.use('/api', updateImagesRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

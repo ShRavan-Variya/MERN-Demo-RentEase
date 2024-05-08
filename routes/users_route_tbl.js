@@ -80,7 +80,7 @@ router.post("/add_user_data", async (req, res) => {
         pincode: newUserTbl.pincode,
         token: token,
       },
-      message: "Login successfully!"
+      message: "Register successfully!"
     }
     res.status(200).json(returnData);
   } catch (err) {
